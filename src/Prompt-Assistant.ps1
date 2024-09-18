@@ -1,6 +1,7 @@
 param(
     [switch]$help,
-    [string]$template
+    [string]$template,
+    [int]$multiplier
 )
 
 # STARTUP
@@ -26,11 +27,25 @@ if ($template -and ($templates -notcontains $template)) {
 
 foreach ($entry in $promptData) {
     if ($entry.template -eq $template) {
-        $text = $entry.text
+        $promptTemplate = $entry
     }
 }
 
-$context = Get-Clipboard
+if ($promptTemplate.uses_clipboard -eq 'true') {
+    $context = Get-Clipboard
+}
+else {
+    $context = ''
+}
+
+$text = $promptTemplate.text
+
+if ($multiplier -and $text.Contains('<MULTIPLIER>')) {
+    $text = $text.Replace('<MULTIPLIER>', [string]$multiplier)
+}
+elseif ($text.Contains('<MULTIPLIER>')) {
+    $text = $text.Replace('<MULTIPLIER>', '1')
+}
+
 $prompt = $text + ("`n" * 2) + $context
 Set-Clipboard $prompt
-
