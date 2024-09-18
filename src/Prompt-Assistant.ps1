@@ -34,7 +34,3 @@ $context = Get-Clipboard
 $prompt = $text + ("`n" * 2) + $context
 Set-Clipboard $prompt
 
-
-#test
-
-# Write-Host $templates
