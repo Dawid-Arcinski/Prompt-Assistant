@@ -1,6 +1,7 @@
 param(
     [switch]$help,
     [string]$template,
+    [string]$lang = "",
     [int]$multiplier
 )
 
@@ -23,7 +24,7 @@ if ($template -and ($templates -notcontains $template)) {
     Exit
 }
 
-# PROCESSING
+# PREPROCESSING
 
 foreach ($entry in $promptData) {
     if ($entry.template -eq $template) {
@@ -35,10 +36,19 @@ if ($promptTemplate.uses_clipboard -eq 'true') {
     $context = Get-Clipboard
 }
 else {
-    $context = ''
+    $context = ""
 }
 
+# APPLYING OPTIONS
+
 $text = $promptTemplate.text
+
+if ($lang -and $text.Contains('<LANG>')) {
+    $text = $text.Replace('<LANG>', " $lang")
+}
+elseif ($text.Contains('<LANG>')) {
+    $text = $text.Replace('<LANG>', "")
+}
 
 if ($multiplier -and $text.Contains('<MULTIPLIER>')) {
     $text = $text.Replace('<MULTIPLIER>', [string]$multiplier)

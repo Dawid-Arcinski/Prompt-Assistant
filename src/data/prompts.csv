@@ -1,4 +1,5 @@
 template,text,uses_clipboard,processing_key
 json_to_java_class,"Using JSON data below as a reference create java class definition. Create single constructor that sets all attributes. Do not generate following methods: getters, setters, toString(), equals() and hashcode().",true,
-json_to_python_class,Using JSON data below as a reference create python class definition. Create single constructor that sets all attributes. Do not generate __repr__ method.,true,
-generate_data,"Using data pasted below as a reference create <MULTIPLIER> more sample(s)",true,
+json_to_python_class,Using JSON data below as a reference create <LANG> class definition. Create single constructor that sets all attributes. Do not generate __repr__ method.,true,
+generate_data,Using data pasted below as a reference create <MULTIPLIER> more sample(s),true,
+format,Format<LANG> code below for better readability,true,
