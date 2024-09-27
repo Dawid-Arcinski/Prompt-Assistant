@@ -2,14 +2,16 @@ param(
     [switch]$help,
     [string]$template,
     [string]$lang = "",
-    [int]$multiplier
+    [int]$multiplier = 1
 )
+
 
 # STARTUP
 
 $mainDir = [System.Environment]::GetEnvironmentVariable("PROMPT_ASSISTANT_HOME", "User")
 Set-Location $mainDir
-$promptData = Import-Csv 'data/prompts.csv'
+Import-Module ./Utils/PromptTools.psm1
+$promptData = Import-Csv "data/prompts.csv"
 $templates = $promptData.template
 
 # VALIDATION
@@ -23,6 +25,7 @@ if ($template -and ($templates -notcontains $template)) {
     Write-Error "Template $template is not present in prompt data"
     Exit
 }
+
 
 # PREPROCESSING
 
@@ -39,23 +42,13 @@ else {
     $context = ""
 }
 
+
 # APPLYING OPTIONS
 
 $text = $promptTemplate.text
+$text = Set-PromptLanguage -PromptText $text -Language $lang
+$text = Set-PromptMultiplier -PromptText $text -Multiplier $multiplier
 
-if ($lang -and $text.Contains('<LANG>')) {
-    $text = $text.Replace('<LANG>', " $lang")
-}
-elseif ($text.Contains('<LANG>')) {
-    $text = $text.Replace('<LANG>', "")
-}
-
-if ($multiplier -and $text.Contains('<MULTIPLIER>')) {
-    $text = $text.Replace('<MULTIPLIER>', [string]$multiplier)
-}
-elseif ($text.Contains('<MULTIPLIER>')) {
-    $text = $text.Replace('<MULTIPLIER>', '1')
-}
 
 $prompt = $text + ("`n" * 2) + $context
 Set-Clipboard $prompt
