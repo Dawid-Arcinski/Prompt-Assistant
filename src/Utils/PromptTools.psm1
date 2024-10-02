@@ -18,17 +18,30 @@ function Set-PromptLanguage {
 }
 
 
-function Set-PromptMultiplier {
+function Set-PromptCounter {
     param (
         [string]$PromptText,
-        [string]$Multiplier
+        [string]$Counter
     )
 
-    if ($PromptText.Contains("<MULTIPLIER>")) {
-        return $PromptText.Replace("<MULTIPLIER>", [string]$Multiplier)
+    if ($PromptText.Contains("<COUNTER>")) {
+        return $PromptText.Replace("<COUNTER>", [string]$Counter)
     }
     else {
         return $PromptText
+    }
+    
+}
+
+
+function Add-ClipboardContent {
+    param([switch]$UsesClipboard)
+
+    if ($UsesClipboard) {
+        return Get-Clipboard
+    }
+    else {
+        return ""
     }
     
 }

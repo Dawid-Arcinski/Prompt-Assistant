@@ -2,13 +2,13 @@ param(
     [switch]$help,
     [string]$template,
     [string]$lang = "",
-    [int]$multiplier = 1
+    [int]$Counter = 1
 )
 
 
 # STARTUP
 
-$mainDir = [System.Environment]::GetEnvironmentVariable("PROMPT_ASSISTANT_HOME", "User")
+$mainDir = [System.Environment]::GetEnvironmentVariable("PROMPT_ASSISTANT_ROOT", "User")
 Set-Location $mainDir
 Import-Module ./Utils/PromptTools.psm1
 $promptData = Import-Csv "data/prompts.csv"
@@ -47,8 +47,7 @@ else {
 
 $text = $promptTemplate.text
 $text = Set-PromptLanguage -PromptText $text -Language $lang
-$text = Set-PromptMultiplier -PromptText $text -Multiplier $multiplier
-
+$text = Set-PromptCounter -PromptText $text -Counter $Counter
 
 $prompt = $text + ("`n" * 2) + $context
 Set-Clipboard $prompt
