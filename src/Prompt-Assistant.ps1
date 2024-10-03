@@ -1,41 +1,61 @@
 param(
-    [switch]$help,
-    [string]$template,
-    [string]$lang = "",
+    [Alias("h")]
+    [switch]$Help,
+    [Alias("t")]
+    [string]$Template,
+    [Alias("l")]
+    [string]$Lang = "",
+    [Alias("c")]
     [int]$Counter = 1
 )
 
 
 # STARTUP
 
-$mainDir = [System.Environment]::GetEnvironmentVariable("PROMPT_ASSISTANT_ROOT", "User")
-Set-Location $mainDir
+$CurrentDir = Get-Location
+$MainDir = [System.Environment]::GetEnvironmentVariable("PROMPT_ASSISTANT_ROOT", "User")
+Set-Location $MainDir
+
 Import-Module ./Utils/PromptTools.psm1
-$promptData = Import-Csv "data/prompts.csv"
-$templates = $promptData.template
+Import-Module ./Utils/DataTools.psm1
+
+$PromptData = Get-PromptData -Path "data/prompts.csv"
+$Templates = $PromptData.template
+$BigCounterTreshold = 20
 
 # VALIDATION
 
-if ($help) {
-    $promptData | Format-Table -Wrap
+if ($Help) {
+    Write-Output $PromptData
     Exit
 }
 
-if ($template -and ($templates -notcontains $template)) {
-    Write-Error "Template $template is not present in prompt data"
+if ($Template -and ($Templates -notcontains $Template)) {
+    Write-Error "Template $Template is not present in prompt data"
     Exit
 }
 
 
 # PREPROCESSING
 
-foreach ($entry in $promptData) {
-    if ($entry.template -eq $template) {
-        $promptTemplate = $entry
+foreach ($Entry in $PromptData) {
+    if ($Entry.template -eq $Template) {
+        $PromptTemplate = $Entry
     }
 }
 
-if ($promptTemplate.uses_clipboard -eq 'true') {
+if ($PromptTemplate.compute_heavy -eq "true" -and $Counter -ge $BigCounterTreshold) {
+    Write-Warning "Selected prompt is resource-intesive. Press 'y' to continue or any other key to abort: "
+    $userInput = Read-Host
+
+    if ($userInput.ToLower() -ne "y") {
+        Write-Output "Terminating script"
+        Exit
+    }
+}
+
+
+if ($PromptTemplate.uses_clipboard -eq 'true') {
     $context = Get-Clipboard
 }
 else {
@@ -45,9 +65,14 @@ else {
 
 # APPLYING OPTIONS
 
-$text = $promptTemplate.text
-$text = Set-PromptLanguage -PromptText $text -Language $lang
+$text = $PromptTemplate.text
+$text = Set-PromptLanguage -PromptText $text -Language $Lang
 $text = Set-PromptCounter -PromptText $text -Counter $Counter
 
 $prompt = $text + ("`n" * 2) + $context
 Set-Clipboard $prompt
+
+
+# CLEANUP
+
+Set-Location $CurrentDir
