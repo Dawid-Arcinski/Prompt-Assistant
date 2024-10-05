@@ -3,14 +3,14 @@ param(
     [switch]$Help,
     [Alias("t")]
     [string]$Template,
-    [Alias("l")]
-    [string]$Lang = "",
+    [Alias("w")]
+    [string]$Words = "",
     [Alias("c")]
     [int]$Counter = 1
 )
 
 
-# STARTUP
+# SETUP
 
 $CurrentDir = Get-Location
 $MainDir = [System.Environment]::GetEnvironmentVariable("PROMPT_ASSISTANT_ROOT", "User")
@@ -22,6 +22,7 @@ Import-Module ./Utils/DataTools.psm1
 $PromptData = Get-PromptData -Path "data/prompts.csv"
 $Templates = $PromptData.template
 $BigCounterTreshold = 20
+
 
 # VALIDATION
 
@@ -54,22 +55,23 @@ if ($PromptTemplate.compute_heavy -eq "true" -and $Counter -ge $BigCounterTresho
     }
 }
 
-
-if ($PromptTemplate.uses_clipboard -eq 'true') {
-    $context = Get-Clipboard
+if ($PromptTemplate.uses_clipboard) {
+    $Context = Get-Clipboard
+    $Context = "`n`n$Context"
 }
 else {
-    $context = ""
+    $Context = ""
 }
+
 
 
 # APPLYING OPTIONS
 
-$text = $PromptTemplate.text
-$text = Set-PromptLanguage -PromptText $text -Language $Lang
-$text = Set-PromptCounter -PromptText $text -Counter $Counter
+$Text = $PromptTemplate.text
+$Text = Set-PromptWords -PromptText $text -Words $Words
+$Text = Set-PromptCounter -PromptText $text -Counter $Counter
 
-$prompt = $text + ("`n" * 2) + $context
+$prompt = $Text + $Context
 Set-Clipboard $prompt
 
 

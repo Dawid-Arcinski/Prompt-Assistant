@@ -1,6 +1,9 @@
 template,text,uses_clipboard,compute_heavy,transformation
 json_to_java_class,"Using JSON data below as a reference create java class definition. Create single constructor that sets all attributes. Do not generate following methods: getters, setters, toString(), equals() and hashcode().",true,false,standard
-json_to_python_class,Using JSON data below as a reference create<LANG>class definition. Create single constructor that sets all attributes. Add type hints. Do not generate __repr__ method.,true,false,standard
+json_to_python_class,Using JSON data below as a reference create python class definition. Create single constructor that sets all attributes. Add type hints. Do not generate __repr__ method.,true,false,standard
 generate_data,Using data pasted below as a reference create <COUNTER> more sample(s).,true,true,standard
-format,Format<LANG>code below for better readability.,true,false,standard
-summarize,Summarize text below in less than <COUNTER> word(s). Be clear and concise.,true,false,p_input
+format,Format<WORD>code below for better readability.,true,false,standard
+summarize,Summarize text below in less than <COUNTER> word(s). Be clear and concise.,true,false,text_portion
+explain_code,"Explain step by step what<WORD>code below is doing",true,false,standard
+guide,Guide me step by step how to learn<WORD>. Make this ineractive and prompt me as we learn,false,false,standard
+data_model, Build me a data model. Here are entities I have so far:,true,false,standard

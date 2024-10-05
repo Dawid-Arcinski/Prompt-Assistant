@@ -1,15 +1,15 @@
 
-function Set-PromptLanguage {
+function Set-PromptWords {
     param (
         [string]$PromptText,
-        [string]$Language
+        [string]$Words
     )
 
-    if ($Language -and $PromptText.Contains("<LANG>")) {
-        return $PromptText.Replace("<LANG>", " $Language ")
+    if ($Words -and $PromptText.Contains("<WORD>")) {
+        return $PromptText.Replace("<WORD>", " $Words ")
     }
-    elseif ($PromptText.Contains("<LANG>")) {
-        return $PromptText.Replace("<LANG>", " ")
+    elseif ($PromptText.Contains("<WORD>")) {
+        return $PromptText.Replace("<WORD>", " ")
     }
     else {
         return $PromptText
@@ -29,19 +29,6 @@ function Set-PromptCounter {
     }
     else {
         return $PromptText
-    }
-    
-}
-
-
-function Add-ClipboardContent {
-    param([switch]$UsesClipboard)
-
-    if ($UsesClipboard) {
-        return Get-Clipboard
-    }
-    else {
-        return ""
     }
     
 }
